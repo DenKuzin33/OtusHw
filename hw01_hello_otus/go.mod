@@ -1,4 +1,4 @@
-module github.com/DenKuzin33/hw01_hello_otus
+module github.com/DenKuzin33/OtusHw/hw01_hello_otus
 
 go 1.20
 
