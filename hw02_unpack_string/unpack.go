@@ -35,7 +35,6 @@ func Unpack(source string) (string, error) {
 		} else {
 			if currentChar != "" {
 				sb.WriteString(currentChar)
-				currentChar = ""
 			}
 			currentChar = string(v)
 		}
