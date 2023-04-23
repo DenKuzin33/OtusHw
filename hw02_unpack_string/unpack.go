@@ -23,8 +23,16 @@ func Unpack(source string) (string, error) {
 		return "", ErrInvalidString
 	}
 
+	escaped := false
 	for _, v := range runes {
-		if unicode.IsDigit(v) {
+		switch {
+		case unicode.IsDigit(v):
+			if escaped {
+				currentChar = string(v)
+				escaped = false
+				continue
+			}
+
 			if currentChar == "" {
 				return "", ErrInvalidString
 			}
@@ -32,7 +40,25 @@ func Unpack(source string) (string, error) {
 			charCount, _ := strconv.Atoi(string(v))
 			sb.WriteString(strings.Repeat(currentChar, charCount))
 			currentChar = ""
-		} else {
+		case v == 92:
+			if currentChar != "" {
+				sb.WriteString(currentChar)
+				currentChar = ""
+			}
+			if escaped {
+				if currentChar == `\` {
+					sb.WriteString(`\`)
+				} else {
+					currentChar = `\`
+				}
+				escaped = false
+			} else {
+				escaped = true
+			}
+		default:
+			if escaped {
+				return "", ErrInvalidString
+			}
 			if currentChar != "" {
 				sb.WriteString(currentChar)
 			}
@@ -40,8 +66,8 @@ func Unpack(source string) (string, error) {
 		}
 	}
 
-	if !unicode.IsDigit(runes[len(runes)-1]) {
-		sb.WriteString(string(runes[len(runes)-1]))
+	if currentChar != "" {
+		sb.WriteString(currentChar)
 	}
 
 	return sb.String(), nil
