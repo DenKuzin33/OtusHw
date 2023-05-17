@@ -43,11 +43,8 @@ func (cache *lruCache) Get(key Key) (interface{}, bool) {
 }
 
 func (cache *lruCache) Clear() {
-	cache = &lruCache{
-		capacity: cache.capacity,
-		queue:    NewList(),
-		items:    make(map[Key]*ListItem, cache.capacity),
-	}
+	cache.queue = NewList()
+	cache.items = make(map[Key]*ListItem, cache.capacity)
 }
 
 func NewCache(capacity int) Cache {
