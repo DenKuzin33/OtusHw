@@ -20,7 +20,7 @@ func Run(tasks []Task, n, m int) error {
 	var result error
 
 	for i, task := range tasks {
-		if errorsCount >= maxErrors && maxErrors > 0 {
+		if atomic.LoadInt64(&errorsCount) >= maxErrors && maxErrors > 0 {
 			// Вычтем незапущенные таски
 			wg.Add(-(len(tasks) - i))
 			result = ErrErrorsLimitExceeded
