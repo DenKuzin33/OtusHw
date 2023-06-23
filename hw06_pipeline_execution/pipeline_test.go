@@ -16,18 +16,13 @@ const (
 func TestPipeline(t *testing.T) {
 	// Stage generator
 	g := func(_ string, f func(v interface{}) interface{}) Stage {
-		return func(in In, done In) Out {
+		return func(in In) Out {
 			out := make(Bi)
 			go func() {
 				defer close(out)
 				for v := range in {
-					select {
-					case <-done:
-						break
-					default:
-						time.Sleep(sleepPerStage)
-						out <- f(v)
-					}
+					time.Sleep(sleepPerStage)
+					out <- f(v)
 				}
 			}()
 			return out
@@ -101,8 +96,8 @@ func TestPipeline(t *testing.T) {
 		done := make(Bi)
 		data := []int{1, 2, 3, 4, 5}
 
-		// Abort after 9 s
-		abortDur := time.Second * 9
+		// Abort after 0.9 s
+		abortDur := time.Millisecond * 900
 		go func() {
 			<-time.After(abortDur)
 			close(done)
