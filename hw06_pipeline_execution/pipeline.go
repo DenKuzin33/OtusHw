@@ -17,18 +17,16 @@ func ExecutePipeline(in In, done In, stages ...Stage) Out {
 	}
 
 	go func() {
+		close(result)
 		for {
 			select {
 			case <-done:
-				close(result)
 				return
 			case v, opened := <-prev:
-				if opened {
-					result <- v
-				} else {
-					close(result)
+				if !opened {
 					return
 				}
+				result <- v
 			}
 		}
 	}()
