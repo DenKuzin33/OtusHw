@@ -32,9 +32,9 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 		return ErrSamePath
 	}
 
-	source, err := os.OpenFile(fromPath, os.O_RDONLY, 0444)
+	source, err := os.OpenFile(fromPath, os.O_RDONLY, 0o444)
 	if err != nil {
-		if err == os.ErrNotExist {
+		if errors.Is(err, os.ErrNotExist) {
 			return ErrFromPath
 		}
 		return err
