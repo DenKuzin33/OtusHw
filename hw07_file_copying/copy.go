@@ -9,6 +9,8 @@ import (
 )
 
 var (
+	ErrSamePath              = errors.New("fromPath equals toPath")
+	ErrFromPath              = errors.New("fromPath doesn't exist")
 	ErrUnsupportedFile       = errors.New("unsupported file")
 	ErrOffsetExceedsFileSize = errors.New("offset exceeds file size")
 )
@@ -26,17 +28,22 @@ func (pb *progressBar) Write(p []byte) (n int, err error) {
 }
 
 func Copy(fromPath, toPath string, offset, limit int64) error {
-	source, err := os.OpenFile(fromPath, os.O_RDONLY, 0o444)
+	if fromPath == toPath {
+		return ErrSamePath
+	}
+
+	source, err := os.OpenFile(fromPath, os.O_RDONLY, 0444)
 	if err != nil {
-		fmt.Println(err)
+		if err == os.ErrNotExist {
+			return ErrFromPath
+		}
 		return err
 	}
 	defer source.Close()
 
 	sourceInfo, err := source.Stat()
 	if err != nil {
-		fmt.Println(err)
-		return err
+		return ErrUnsupportedFile
 	}
 	sourceLen := sourceInfo.Size()
 	bytesToCopy := sourceLen - offset
@@ -50,7 +57,6 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 
 	target, err := os.Create(toPath)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 	defer target.Close()
