@@ -15,7 +15,8 @@ func TestReadDir(t *testing.T) {
 	})
 
 	t.Run("terminal zero", func(t *testing.T) {
-		require.Equal(t, "   foo", envSet["FOO"].Value)
+		require.Equal(t, `   foo
+with new line`, envSet["FOO"].Value)
 	})
 
 	t.Run("empty", func(t *testing.T) {

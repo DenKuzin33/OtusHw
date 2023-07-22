@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"os"
 	"path"
 	"strings"
@@ -45,13 +46,8 @@ func ReadDir(dir string) (Environment, error) {
 		scanner.Scan()
 
 		val := strings.TrimRight(scanner.Text(), " ")
-		runes := []rune(val)
-		for i, rune := range val {
-			if rune == 0 {
-				val = string(runes[:i])
-				break
-			}
-		}
+		bytesVal := []byte(val)
+		val = string(bytes.ReplaceAll(bytesVal, []byte{0}, []byte{10}))
 
 		env[fileInfo.Name()] = EnvValue{Value: val}
 	}
