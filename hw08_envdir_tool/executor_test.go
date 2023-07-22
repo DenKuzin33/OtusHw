@@ -9,7 +9,7 @@ import (
 )
 
 const checkTemplate = `
-if [ $%s == %s ]; then
+if [ "$%s" == "%s" ]; then
 	exit 0;
 else
 	exit 1;
@@ -24,7 +24,7 @@ func TestRunCmd(t *testing.T) {
 		name  string
 		value string
 	}{
-		{"FOO", "   foo"},
+		{"FOO", "   foo\nwith new line"},
 		{"BAR", "bar"},
 		{"EMPTY", ""},
 		{"HELLO", "\\\"hello\\\""},
