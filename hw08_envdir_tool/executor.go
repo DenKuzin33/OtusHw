@@ -17,9 +17,15 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 
 	for key, value := range env {
 		if value.NeedRemove {
-			os.Unsetenv(key)
+			err := os.Unsetenv(key)
+			if err != nil {
+				return -2
+			}
 		} else {
-			os.Setenv(key, value.Value)
+			err := os.Setenv(key, value.Value)
+			if err != nil {
+				return -3
+			}
 		}
 	}
 

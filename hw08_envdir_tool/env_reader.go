@@ -40,10 +40,10 @@ func ReadDir(dir string) (Environment, error) {
 		if err != nil {
 			return env, err
 		}
-		defer file.Close()
 
 		scanner := bufio.NewScanner(file)
 		scanner.Scan()
+		file.Close()
 
 		val := strings.TrimRight(scanner.Text(), " ")
 		bytesVal := []byte(val)
